@@ -61,8 +61,8 @@ input,select{display:block;width:100%;font:inherit;color:var(--ink);background:v
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.js"></script>
 <script>
 /* ===== CONFIG: paste your two Supabase values here (see README) ===== */
-const SUPABASE_URL="PASTE_YOUR_PROJECT_URL";
-const SUPABASE_KEY="PASTE_YOUR_PUBLISHABLE_KEY";
+const SUPABASE_URL="https://cgvjteedyursrczwmkmj.supabase.co/rest/v1/";
+const SUPABASE_KEY="sb_publishable_ylc_93DpMGf8TUdV-I2jNA_SKH7p4cB";
 /* ==================================================================== */
 const sb=SUPABASE_URL.startsWith("http")&&window.supabase?window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY):null;
 const claude={use:async n=>n==="downloads"?{save:async({filename,data})=>{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([data],{type:"text/csv"}));a.download=filename;document.body.appendChild(a);a.click();a.remove()}}:null};
