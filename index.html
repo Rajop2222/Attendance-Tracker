@@ -64,7 +64,7 @@ input,select{display:block;width:100%;font:inherit;color:var(--ink);background:v
 const SUPABASE_URL="https://cgvjteedyursrczwmkmj.supabase.co";
 const SUPABASE_KEY="sb_publishable_ylc_93DpMGf8TUdV-I2jNA_SKH7p4cB";
 /* ==================================================================== */
-const sb=SUPABASE_URL.startsWith("http")&&window.supabase?window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY):null;
+const sb=SUPABASE_URL.startsWith("http")&&window.supabase?window.supabase.createClient(new URL(SUPABASE_URL.trim()).origin,SUPABASE_KEY.trim()):null;
 const claude={use:async n=>n==="downloads"?{save:async({filename,data})=>{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([data],{type:"text/csv"}));a.download=filename;document.body.appendChild(a);a.click();a.remove()}}:null};
 const $=s=>document.querySelector(s),IST="Asia/Kolkata",PAL=["#3949d6","#0e9f8e","#d9730d","#a23bd1","#d1357a","#2f80c2","#7a8a12","#6b7280"];
 const NAV=[["home","Home"],["subjects","Subjects"],["hist","History"],["stats","Stats"],["set","Settings"]];
