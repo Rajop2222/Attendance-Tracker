@@ -59,10 +59,11 @@ input,select{display:block;width:100%;font:inherit;color:var(--ink);background:v
 <div class="app"><nav id="nav" aria-label="Main"></nav><main id="main"><p class="mut">Loading your attendance…</p></main></div>
 <div id="toast" role="status"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.js"></script>
+<script src="config.js"></script>
 <script>
-/* ===== CONFIG: paste your two Supabase values here (see README) ===== */
-const SUPABASE_URL="https://cgvjteedyursrczwmkmj.supabase.co";
-const SUPABASE_KEY="sb_publishable_ylc_93DpMGf8TUdV-I2jNA_SKH7p4cB";
+/* Your Supabase values now live in config.js, so you never edit them here. */
+const SUPABASE_URL=window.SUPABASE_URL||"";
+const SUPABASE_KEY=window.SUPABASE_KEY||"";
 /* ==================================================================== */
 const sb=SUPABASE_URL.startsWith("http")&&window.supabase?window.supabase.createClient(new URL(SUPABASE_URL.trim()).origin,SUPABASE_KEY.trim()):null;
 const claude={use:async n=>n==="downloads"?{save:async({filename,data})=>{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([data],{type:"text/csv"}));a.download=filename;document.body.appendChild(a);a.click();a.remove()}}:null};
@@ -238,7 +239,7 @@ function subjects(){
  const e=S.subjects.find(s=>s.id===editing)||{};
  return`<h1>My subjects</h1><div class="card"><h2>${e.id?"Edit subject":"Add a subject"}</h2><div class="two"><label>Subject name<input id="sn" value="${esc(e.name||"")}" maxlength="80"></label><label>Subject code<input id="sc" value="${esc(e.code||"")}" maxlength="20"></label></div>
  ${e.id?"":`<div class="two"><label>Teacher short name (for example KD)<input id="t1" maxlength="20"></label><label>Teacher full name<input id="t1f" maxlength="60"></label></div>`}
- <div class="two"><label>Semester (optional)<input id="sm" value="${esc(e.sem||"")}" maxlength="20"></label><label>Department (optional)<input id="sd" value="${esc(e.dept||"")}" maxlength="40"></label></div>
+ <div class="two"><label>Semester (optional)<select id="sm"><option value="">Not set</option>${[1,2,3,4,5,6,7,8,9,10].map(n=>`<option value="${n}" ${String(e.sem)===String(n)?"selected":""}>${n}</option>`).join("")}</select></label><label>Department (optional)<input id="sd" value="${esc(e.dept||"")}" maxlength="40"></label></div>
  <label>Colour<input type="color" id="sk" value="${e.color||PAL[S.subjects.length%PAL.length]}"></label>
  <div class="two"><button class="btn" data-a="saveSub">${e.id?"Save changes":"Add subject"}</button>${e.id?`<button class="btn ghost" data-a="cancelEdit">Cancel</button>`:""}</div></div>
  <input type="search" data-f="q" value="${esc(F.q)}" placeholder="Search by subject, code or teacher" aria-label="Search subjects" style="margin-bottom:12px"><div id="sublist">${subList()}</div>`}
@@ -246,7 +247,7 @@ async function saveSub(){
  const v=i=>($("#"+i)?.value||"").trim(),name=v("sn"),code=v("sc");
  if(!name||!code)return toast("Enter the subject name and code.","err");
  if(S.subjects.some(s=>s.id!==editing&&s.code.toLowerCase()===code.toLowerCase()))return toast("That subject code already exists. Add the other teacher to that subject instead.","err");
- const f={name,code,sem:v("sm"),dept:v("sd"),color:$("#sk").value};
+ const f={name,code,sem:/^([1-9]|10)$/.test(v("sm"))?v("sm"):"",dept:v("sd"),color:$("#sk").value};
  if(editing){Object.assign(S.subjects.find(s=>s.id===editing),f);editing=null}
  else{const t=v("t1");if(!t)return toast("Add at least one teacher.","err");S.subjects.push({id:uid(),...f,teachers:[{id:uid(),name:t,full:v("t1f")}]})}
  if(await save(["core"]))toast("Subject saved.","ok");render()}
@@ -358,7 +359,7 @@ async function boot(){
  else if(data){const c=data.core||{},r=data.recs||{},l=data.log||{};S.subjects=c.subjects||[];S.target=c.target??75;S.recs=r.recs||{};S.last=r.last||null;S.log=l.items||[]}
  ready=true;render()}
 (async function init(){
- if(!sb){ready=true;$("#main").innerHTML=`<div class="card"><h2>Almost there</h2><p>Open index.html, paste your Supabase project URL and key near the top of the script, and save. The README has the steps.</p></div>`;return}
+ if(!sb){ready=true;$("#main").innerHTML=`<div class="card"><h2>Almost there</h2><p>The site can’t find your Supabase settings. Add a file named config.js with your project URL and key (see the README).</p></div>`;return}
  await boot()})();
 </script>
 </body>
